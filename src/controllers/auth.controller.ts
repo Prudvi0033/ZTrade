@@ -11,11 +11,13 @@ const generateToken = (userId: number) => {
 
 export const loginController = async (c: Context) => {
   try {
-    const { username, password } = await c.req.json();
+    let { username, password } = await c.req.json();
 
     if (!username || !password) {
       return c.json({ msg: "All fields are required" }, 400);
     }
+
+    username = username.toLowerCase().trim();
 
     const user = await db
       .select()
@@ -28,7 +30,7 @@ export const loginController = async (c: Context) => {
 
     const isPasswordValid = await bcrypt.compare(
       password,
-      user[0]?.password as string,
+      user[0]?.password as string
     );
 
     if (!isPasswordValid) {
@@ -48,11 +50,13 @@ export const loginController = async (c: Context) => {
 
 export const signupController = async (c: Context) => {
   try {
-    const { username, password } = await c.req.json();
+    let { username, password } = await c.req.json();
 
     if (!username || !password) {
       return c.json({ msg: "All fields are required" }, 400);
     }
+
+    username = username.toLowerCase().trim();
 
     const existingUser = await db
       .select()
