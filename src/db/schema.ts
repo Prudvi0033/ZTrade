@@ -53,7 +53,7 @@ export const accounts = pgTable("accounts",{
 export const markets = pgTable("markets", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
 
-  symbol: varchar({ length: 50 }).notNull(),
+  symbol: varchar({ length: 50 }).notNull().unique(),
 
   base_asset_id: integer("base_asset_id")
     .notNull()

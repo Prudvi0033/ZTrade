@@ -8,6 +8,13 @@
       "when": 1773152744118,
       "tag": "0000_square_devos",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1773236448751,
+      "tag": "0001_orange_mysterio",
+      "breakpoints": true
     }
   ]
 }
