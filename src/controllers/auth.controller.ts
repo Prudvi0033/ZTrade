@@ -1,6 +1,6 @@
 import type { Context } from "hono";
 import { db } from "..";
-import { users } from "../db/schema";
+import { accounts, assets, users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -30,7 +30,7 @@ export const loginController = async (c: Context) => {
 
     const isPasswordValid = await bcrypt.compare(
       password,
-      user[0]?.password as string
+      user[0]?.password as string,
     );
 
     if (!isPasswordValid) {
@@ -76,6 +76,30 @@ export const signupController = async (c: Context) => {
         password: hashedPassword,
       })
       .returning();
+
+    const createdUser = newUser[0];
+
+    if (!createdUser) {
+      return c.json({ msg: "Error creating user" }, 500);
+    }
+
+    const usdAsset = await db
+      .select()
+      .from(assets)
+      .where(eq(assets.symbol, "USD"));
+
+    const usd = usdAsset[0];
+
+    if (!usd) {
+      return c.json({ msg: "USD asset not initialized" }, 500);
+    }
+
+    await db.insert(accounts).values({
+      user_id: createdUser.id,
+      asset_id: usd.id,
+      balance: 10000,
+      reserved_balance: 0,
+    });
 
     const token = generateToken(newUser[0]?.id as number);
 

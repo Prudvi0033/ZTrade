@@ -20,7 +20,11 @@ export const protectRoute = async (c: Context, next: Next) => {
     ) as { userId: number };
 
     const user = await db
-      .select()
+      .select({
+        id: users.id,
+        username: users.username,
+        createdAt: users.createdAt
+      })
       .from(users)
       .where(eq(users.id, decoded.userId));
 
